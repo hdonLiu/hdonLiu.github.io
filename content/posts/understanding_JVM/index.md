@@ -36,12 +36,10 @@ draft: false
 
 ##### 程序计数器(Program Counter Pegister)
 线程私有
-```
-程序计数器 是流程控制的指示器，各条线程之间计数器互不影响，独立存储(线程私有)
-```
-```
-是唯一一个没有规定任何OutOfMemoryError(OOM)情况的区域
-```
+
+    程序计数器 是流程控制的指示器，各条线程之间计数器互不影响，独立存储(线程私有)
+    是唯一一个没有规定任何OutOfMemoryError(OOM)情况的区域
+
 
 ##### Java虚拟机栈(Java Virtual Machine Stack)
 线程私有
@@ -58,4 +56,8 @@ Java虚拟机栈描述的是Java方法执行的线程内存模型，生命周期
 ##### 本地方法栈(Native Method Stack)
 线程私有
 ```
+
+```
+```
+
 ```
