@@ -1,6 +1,6 @@
 ---
 title: 'Documenting an Out-of-Memory (OOM) Error'
-date: 2025-2-21T21:30:20+08:00
+date: 2025-02-21T21:30:20+08:00
 draft: false
 ---
 
