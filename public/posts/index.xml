@@ -1,14 +1,185 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
         <title>All Posts - hdonBlog</title>
-        <link>https://hdonliu.github.io/posts/</link>
+        <link>http://localhost:1313/posts/</link>
         <description>All Posts | hdonBlog</description>
-        <generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Fri, 27 Oct 2023 16:34:20 &#43;0800</lastBuildDate><atom:link href="https://hdonliu.github.io/posts/" rel="self" type="application/rss+xml" /><item>
-    <title>hdLiu</title>
-    <link>https://hdonliu.github.io/posts/first_post/</link>
+        <generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Fri, 21 Feb 2025 21:30:20 &#43;0800</lastBuildDate><atom:link href="http://localhost:1313/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>Documenting an Out-of-Memory (OOM) Error</title>
+    <link>http://localhost:1313/posts/one_netty_oom/</link>
+    <pubDate>Fri, 21 Feb 2025 21:30:20 &#43;0800</pubDate><author>
+        <name>Author</name>
+    </author><guid>http://localhost:1313/posts/one_netty_oom/</guid>
+    <description><![CDATA[<h2 id="time" class="headerLink">
+    <a href="#time" class="header-mark"></a>Time</h2><p>2025.2.21  8.30 PM</p>
+<h2 id="background" class="headerLink">
+    <a href="#background" class="header-mark"></a>Background</h2><p>In the project, MQTT is used for IoT device communication, and Hook is utilized on top of MQTT for ACL and message enhancement. During a load test in the test environment, the Hook service encountered an OOM (Out Of Memory) situation.</p>
+<h2 id="problem" class="headerLink">
+    <a href="#problem" class="header-mark"></a>Problem:</h2><p>The MQTT monitoring platform is experiencing widespread hook errors.</p>
+<h3 id="log" class="headerLink">
+    <a href="#log" class="header-mark"></a>Log</h3><pre tabindex="0"><code>10:30:09,812 |-INFO in c.q.l.core.rolling.helper.TimeBasedArchiveRemover - Removed  100 MB of files
+Exception in thread &#34;exhook-134244&#34; java.lang.OutOfMemoryError: Cannot reserve 2097152 bytes of direct buffer memory (allocated: 2146302585, limit: 2147483648)
+at java.base/java.nio.Bits.reserveMemory(Bits.java:178)
+at java.base/java.nio.DirectByteBuffer.&lt;init&gt;(DirectByteBuffer.java:121)
+at java.base/java.nio.ByteBuffer.allocateDirect(ByteBuffer.java:332)
+at io.grpc.netty.shaded.io.netty.buffer.PoolArena$DirectArena.allocateDirect(PoolArena.java:717)
+at io.grpc.netty.shaded.io.netty.buffer.PoolArena$DirectArena.newChunk(PoolArena.java:692)
+at io.grpc.netty.shaded.io.netty.buffer.PoolArena.allocateNormal(PoolArena.java:215)
+at io.grpc.netty.shaded.io.netty.buffer.PoolArena.tcacheAllocateNormal(PoolArena.java:197)
+at io.grpc.netty.shaded.io.netty.buffer.PoolArena.allocate(PoolArena.java:139)
+at io.grpc.netty.shaded.io.netty.buffer.PoolArena.allocate(PoolArena.java:129)
+at io.grpc.netty.shaded.io.netty.buffer.PooledByteBufAllocator.newDirectBuffer(PooledByteBufAllocator.java:395)
+at io.grpc.netty.shaded.io.netty.buffer.AbstractByteBufAllocator.directBuffer(AbstractByteBufAllocator.java:188)
+at io.grpc.netty.shaded.io.netty.buffer.AbstractByteBufAllocator.buffer(AbstractByteBufAllocator.java:124)
+at io.grpc.netty.shaded.io.grpc.netty.NettyWritableBufferAllocator.allocate(NettyWritableBufferAllocator.java:51)
+at io.grpc.internal.MessageFramer.writeKnownLengthUncompressed(MessageFramer.java:226)
+at io.grpc.internal.MessageFramer.writeUncompressed(MessageFramer.java:172)
+at io.grpc.internal.MessageFramer.writePayload(MessageFramer.java:143)
+at io.grpc.internal.AbstractStream.writeMessage(AbstractStream.java:66)
+at io.grpc.internal.ServerCallImpl.sendMessageInternal(ServerCallImpl.java:168)
+at io.grpc.internal.ServerCallImpl.sendMessage(ServerCallImpl.java:152)
+at io.grpc.ForwardingServerCall.sendMessage(ForwardingServerCall.java:32)
+at io.opentelemetry.javaagent.shaded.instrumentation.grpc.v1_6.TracingServerInterceptor$TracingServerCall.sendMessage(TracingServerInterceptor.java:107)
+at io.grpc.stub.ServerCalls$ServerCallStreamObserverImpl.onNext(ServerCalls.java:380)
+at xxx.xxxx.account.core.mqttHook.HookProviderImpl.onMessagePublish(HookProviderImpl.java:319)
+at xxx.xxxx.account.core.mqttHook.exhook.HookProviderGrpc$MethodHandlers.invoke(HookProviderGrpc.java:1518)
+at io.grpc.stub.ServerCalls$UnaryServerCallHandler$UnaryServerCallListener.onHalfClose(ServerCalls.java:182)
+at io.grpc.PartialForwardingServerCallListener.onHalfClose(PartialForwardingServerCallListener.java:35)
+at io.grpc.ForwardingServerCallListener.onHalfClose(ForwardingServerCallListener.java:23)
+at io.grpc.ForwardingServerCallListener$SimpleForwardingServerCallListener.onHalfClose(ForwardingServerCallListener.java:40)
+at io.grpc.Contexts$ContextualizedServerCallListener.onHalfClose(Contexts.java:86)
+at io.opentelemetry.javaagent.shaded.instrumentation.grpc.v1_6.TracingServerInterceptor$TracingServerCall$TracingServerCallListener.onHalfClose(TracingServerInterceptor.java:152)
+at io.grpc.internal.ServerCallImpl$ServerStreamListenerImpl.halfClosed(ServerCallImpl.java:356)
+at io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1HalfClosed.runInContext(ServerImpl.java:861)
+at io.grpc.internal.ContextRunnable.run(ContextRunnable.java:37)
+at io.grpc.internal.SerializingExecutor.run(SerializingExecutor.java:133)
+at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+at java.base/java.lang.Thread.run(Thread.java:833)
+</code></pre><h3 id="code" class="headerLink">
+    <a href="#code" class="header-mark"></a>code</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Java" data-lang="Java"><span class="line"><span class="cl"><span class="kd">private</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">start</span><span class="p">()</span><span class="w"> </span><span class="kd">throws</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">ThreadPoolExecutor</span><span class="w"> </span><span class="n">threadPoolExecutor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">corePoolSize</span><span class="p">,</span><span class="w"> </span><span class="n">maxPoolSize</span><span class="p">,</span><span class="w"> </span><span class="n">0L</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">TimeUnit</span><span class="p">.</span><span class="na">MILLISECONDS</span><span class="p">,</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">LinkedBlockingQueue</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">100</span><span class="p">),</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">CustomizableThreadFactory</span><span class="p">(</span><span class="s">&#34;exhook-&#34;</span><span class="p">));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">server</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NettyServerBuilder</span><span class="p">.</span><span class="na">forPort</span><span class="p">(</span><span class="n">port</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">addService</span><span class="p">(</span><span class="n">hookProvider</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">executor</span><span class="p">(</span><span class="n">threadPoolExecutor</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">build</span><span class="p">()</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">.</span><span class="na">start</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">log</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">&#34;EMQX gRPC Server started, listening on {}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">port</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Runtime</span><span class="p">.</span><span class="na">getRuntime</span><span class="p">().</span><span class="na">addShutdownHook</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Thread</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nd">@Override</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="c1">// Use stderr here since the logger may have been reset by its JVM shutdown hook.</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">log</span><span class="p">.</span><span class="na">error</span><span class="p">(</span><span class="s">&#34;*** shutting down EMQX gRPC server since JVM is shutting down&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="k">try</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="n">threadPoolExecutor</span><span class="p">.</span><span class="na">shutdown</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="n">ExhookServer</span><span class="p">.</span><span class="na">this</span><span class="p">.</span><span class="na">stop</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="n">InterruptedException</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="n">e</span><span class="p">.</span><span class="na">printStackTrace</span><span class="p">(</span><span class="n">System</span><span class="p">.</span><span class="na">err</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">log</span><span class="p">.</span><span class="na">error</span><span class="p">(</span><span class="s">&#34;*** EMQX gRPC server shut down&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">});</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><h3 id="explanation" class="headerLink">
+    <a href="#explanation" class="header-mark"></a>Explanation</h3><p>I used <strong>Netty</strong> to bind and listen on a port for handling <strong>gRPC</strong> services, which serves as the <strong>MQTT hook</strong>.</p>]]></description>
+</item><item>
+    <title>GRPC mac istall protoc and generate Java code</title>
+    <link>http://localhost:1313/posts/grpc/</link>
+    <pubDate>Wed, 26 Jun 2024 14:24:23 &#43;0800</pubDate><author>
+        <name>Author</name>
+    </author><guid>http://localhost:1313/posts/grpc/</guid>
+    <description><![CDATA[<h1 id="method-1" class="headerLink">
+    <a href="#method-1" class="header-mark"></a>Method 1</h1><h2 id="1-install-protobuf" class="headerLink">
+    <a href="#1-install-protobuf" class="header-mark"></a>1. install protobuf</h2><pre tabindex="0"><code>brew install protobuf
+</code></pre><h2 id="2-generate-code-with-proto-file" class="headerLink">
+    <a href="#2-generate-code-with-proto-file" class="header-mark"></a>2. generate code with proto file</h2><pre tabindex="0"><code>protoc --java_out=./ helloworld.proto
+</code></pre><h2 id="3-install-protoc-gen-grpc-java" class="headerLink">
+    <a href="#3-install-protoc-gen-grpc-java" class="header-mark"></a>3. install protoc-gen-grpc-java</h2><pre tabindex="0"><code>install protoc-gen-grpc-java from meven: 
+    https://repo.maven.apache.org/maven2/io/grpc/protoc-gen-grpc-java/
+download your version:
+    like:  protoc-gen-grpc-java-1.64.0-osx-aarch_64.exe
+</code></pre><h2 id="4-chmod" class="headerLink">
+    <a href="#4-chmod" class="header-mark"></a>4. chmod</h2><p>need to set executable permissions</p>
+<pre tabindex="0"><code>chmod +x protoc-gen-grpc-java-1.64.0-osx-aarch_64.exe
+</code></pre><h2 id="5-generate-grpc-service-class" class="headerLink">
+    <a href="#5-generate-grpc-service-class" class="header-mark"></a>5. generate grpc service class</h2><pre tabindex="0"><code> protoc --plugin=protoc-gen-grpc-java=/your-path/protoc-gen-grpc-java-1.64.0-osx-aarch_64.exe --grpc-java_out=./ helloworld.proto
+</code></pre><h1 id="method-2---" class="headerLink">
+    <a href="#method-2---" class="header-mark"></a>Method 2   ✅</h1><h2 id="1-add-dependencies" class="headerLink">
+    <a href="#1-add-dependencies" class="header-mark"></a>1. add dependencies</h2><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-XML" data-lang="XML"><span class="line"><span class="cl"><span class="nt">&lt;dependencies&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;groupId&gt;</span>io.grpc<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;artifactId&gt;</span>grpc-netty-shaded<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;version&gt;</span>1.64.0<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;scope&gt;</span>runtime<span class="nt">&lt;/scope&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;groupId&gt;</span>io.grpc<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;artifactId&gt;</span>grpc-protobuf<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;version&gt;</span>1.64.0<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;groupId&gt;</span>io.grpc<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;artifactId&gt;</span>grpc-stub<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;version&gt;</span>1.64.0<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;dependency&gt;</span> <span class="c">&lt;!-- necessary for Java 9+ --&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;groupId&gt;</span>org.apache.tomcat<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;artifactId&gt;</span>annotations-api<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;version&gt;</span>6.0.53<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;scope&gt;</span>provided<span class="nt">&lt;/scope&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/dependency&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependencies&gt;</span>
+</span></span></code></pre></div><h2 id="2-add-plugin" class="headerLink">
+    <a href="#2-add-plugin" class="header-mark"></a>2. add plugin</h2><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-XML" data-lang="XML"><span class="line"><span class="cl"><span class="nt">&lt;plugin&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;groupId&gt;</span>org.xolstice.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;artifactId&gt;</span>protobuf-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;version&gt;</span>0.6.1<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;configuration&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;protocArtifact&gt;</span>com.google.protobuf:protoc:3.25.1:exe:${os.detected.classifier}<span class="nt">&lt;/protocArtifact&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;pluginId&gt;</span>grpc-java<span class="nt">&lt;/pluginId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;pluginArtifact&gt;</span>io.grpc:protoc-gen-grpc-java:1.64.0:exe:${os.detected.classifier}<span class="nt">&lt;/pluginArtifact&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="c">&lt;!--                    &lt;outputDirectory&gt;${project.basedir}/src/main/java&lt;/outputDirectory&gt;--&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/configuration&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;executions&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;execution&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;goals&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;goal&gt;</span>compile<span class="nt">&lt;/goal&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;goal&gt;</span>compile-custom<span class="nt">&lt;/goal&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;/goals&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/execution&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/executions&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/plugin&gt;</span>
+</span></span></code></pre></div><h2 id="3-generate-code-with-proto-file" class="headerLink">
+    <a href="#3-generate-code-with-proto-file" class="header-mark"></a>3. generate code with proto file</h2><p>1.run protobuf compile
+2.run protobuf compile-custom</p>]]></description>
+</item><item>
+    <title>service mesh</title>
+    <link>http://localhost:1313/posts/service_mesh/</link>
     <pubDate>Fri, 27 Oct 2023 16:34:20 &#43;0800</pubDate><author>
         <name>Author</name>
-    </author><guid>https://hdonliu.github.io/posts/first_post/</guid>
-    <description><![CDATA[Apache Airflow Apache Airflow 是一个使用 Python 语言编写的 Data Pipeline 调度和监控工作流的开源平台，可以用于编排复杂工作流。它是通过 DAG（Directed acyclic graph 有向无环图）来管理]]></description>
+    </author><guid>http://localhost:1313/posts/service_mesh/</guid>
+    <description><![CDATA[<h2 id="什么是service-mesh" class="headerLink">
+    <a href="#%e4%bb%80%e4%b9%88%e6%98%afservice-mesh" class="header-mark"></a>什么是Service Mesh</h2><pre tabindex="0"><code>    现代应用程序通常被架构为分布式微服务集合，每个微服务集合执行一些离散的业务功能。服务网格是一个专用的基础设施层，您可以将其添加到您的应用程序中。它允许您透明地添加可观察性、流量管理和安全性等功能，而无需将它们添加到您自己的代码中。术语“服务网格”描述了用于实现此模式的软件类型，以及使用该软件时创建的安全或网络域。
+
+    随着分布式服务的部署（例如在基于 Kubernetes 的系统中）的规模和复杂性的增长，它可能会变得更难以理解和管理。其需求可包括发现、负载平衡、故障恢复、指标和监控。服务网格通常还可以解决更复杂的操作需求，例如 A/B 测试、金丝雀部署、速率限制、访问控制、加密和端到端身份验证。
+
+    服务到服务的通信使分布式应用程序成为可能。随着服务数量的增长，在应用程序集群内部和之间路由这种通信变得越来越复杂。
+</code></pre>]]></description>
+</item><item>
+    <title>深入理解Java虚拟机</title>
+    <link>http://localhost:1313/posts/understanding_jvm/</link>
+    <pubDate>Fri, 27 Oct 2023 16:34:20 &#43;0800</pubDate><author>
+        <name>Author</name>
+    </author><guid>http://localhost:1313/posts/understanding_jvm/</guid>
+    <description><![CDATA[<h2 id="1-jvm现状" class="headerLink">
+    <a href="#1-jvm%e7%8e%b0%e7%8a%b6" class="header-mark"></a>1. JVM现状</h2><h3 id="当前环境下java的劣势" class="headerLink">
+    <a href="#%e5%bd%93%e5%89%8d%e7%8e%af%e5%a2%83%e4%b8%8bjava%e7%9a%84%e5%8a%a3%e5%8a%bf" class="header-mark"></a>当前环境下Java的劣势</h3><p>在<strong>微服务架构</strong>的视角下，有了高可用的服务集群，也就无需追求单个服务7*24小时运行，反而因为Java的启动时间相对较长，需要预热才能达到最高性能等特点就显得有悖于这样的应用场景。
+比起服务，一个函数的规模通常会更小，执行时间更短，当前最热门的无服务运行环境AWS Lambda 所允许的最长运行时间仅有15分钟。</p>
+<h3 id="java的提前编译" class="headerLink">
+    <a href="#java%e7%9a%84%e6%8f%90%e5%89%8d%e7%bc%96%e8%af%91" class="header-mark"></a>Java的提前编译</h3><p>**提前编译(Ahead of Time Compilation ATO)**是相对于即时编译的概念。
+提前编译能带来的最大好处是Java虚拟机加载这些已经编译成二进制库之后就能够直接调用，而无需等待即时编译器在运行时将其编译成二进制机器码。理论上，提前编译可以减少即时编译带来的预热时间。
+但是提前编译的坏处也很明显，它破坏了Java “一次编写，到处运行”的承诺，必须为不同的硬件、操作系统编译对应的发行包，必须要求加载的代码在编译期就是全部已知的，而不能在运行期才确定，否则就只能舍弃掉已经提前编译好的版本</p>]]></description>
 </item></channel>
 </rss>

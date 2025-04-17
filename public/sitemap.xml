@@ -2,9 +2,12 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
-            <loc>https://hdonliu.github.io/about/</loc><lastmod>2023-10-27T16:34:20&#43;08:00</lastmod></url><url>
-            <loc>https://hdonliu.github.io/posts/first_post/</loc><lastmod>2023-10-27T16:34:20&#43;08:00</lastmod></url><url>
-            <loc>https://hdonliu.github.io/</loc><lastmod>2023-10-27T16:34:20&#43;08:00</lastmod></url><url>
-            <loc>https://hdonliu.github.io/posts/</loc><lastmod>2023-10-27T16:34:20&#43;08:00</lastmod></url><url>
-            <loc>https://hdonliu.github.io/categories/</loc></url><url>
-            <loc>https://hdonliu.github.io/tags/</loc></url></urlset>
+            <loc>http://localhost:1313/posts/one_netty_oom/</loc><lastmod>2025-02-21T21:30:20&#43;08:00</lastmod></url><url>
+            <loc>http://localhost:1313/</loc><lastmod>2025-02-21T21:30:20&#43;08:00</lastmod></url><url>
+            <loc>http://localhost:1313/posts/</loc><lastmod>2025-02-21T21:30:20&#43;08:00</lastmod></url><url>
+            <loc>http://localhost:1313/posts/grpc/</loc><lastmod>2024-06-26T14:24:23&#43;08:00</lastmod></url><url>
+            <loc>http://localhost:1313/about/</loc><lastmod>2023-10-27T16:34:20&#43;08:00</lastmod></url><url>
+            <loc>http://localhost:1313/posts/service_mesh/</loc><lastmod>2023-10-27T16:34:20&#43;08:00</lastmod></url><url>
+            <loc>http://localhost:1313/posts/understanding_jvm/</loc><lastmod>2023-10-27T16:34:20&#43;08:00</lastmod></url><url>
+            <loc>http://localhost:1313/categories/</loc></url><url>
+            <loc>http://localhost:1313/tags/</loc></url></urlset>
