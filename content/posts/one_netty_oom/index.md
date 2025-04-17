@@ -67,6 +67,7 @@ private void start() throws IOException {
         server = NettyServerBuilder.forPort(port)
                 .addService(hookProvider)
                 .executor(threadPoolExecutor)
+                .withChildOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT) // 修改点：使用池化思想，减少资源的创建销毁
                 .build()
                 .start();
 
